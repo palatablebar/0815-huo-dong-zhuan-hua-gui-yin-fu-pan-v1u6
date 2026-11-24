@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block scripts %}<script type="module" src="{{ url_for('static', filename='experiment.js') }}"></script>{% endblock %}
+{% block shell %}
+<body class="campaign experiment">
+<main class="desk exp-desk" aria-label="experiment">
+  <header class="mast"><p class="role">增长与财务联合复核</p><h1>{{ p.name }}</h1></header>
+
+  <form class="source" id="exp-source" aria-label="实验批次输入">
+    <label>输入样例
+      <select id="exp-profile">
+        <option value="ready">已成熟样例</option>
+        <option value="risk">风险样例</option>
+      </select>
+    </label>
+    <label for="exp-file" class="file">上传 CSV</label>
+    <input id="exp-file" type="file" accept=".csv,text/csv">
+    <span id="exp-file-name" aria-live="polite"></span>
+    <label>报告截止日 <input id="exp-asof" type="number" min="0" placeholder="取数据末日"></label>
+    <label>并入批次 <input id="exp-batch" type="text" placeholder="留空新建"></label>
+    <button type="submit" class="action">生成判定单</button>
+  </form>
+
+  <div class="kpis" id="exp-kpis" aria-label="判定统计">
+    {% for key, text in [('groups','活动组'), ('continue','继续'), ('observe','观察'), ('rollback','回滚')] %}
+    <div class="metric"><span>{{ text }}</span><strong data-metric="{{ key }}">—</strong></div>
+    {% endfor %}
+  </div>
+
+  <section class="panel results" aria-labelledby="exp-panel-title">
+    <div class="panel-head"><h2 id="exp-panel-title">放量判定</h2><span id="exp-batch-state"></span></div>
+    <p id="exp-verdict" class="verdict" role="status" aria-live="polite"></p>
+    <div class="scroll"><table id="exp-rows" aria-label="活动组判定"></table></div>
+  </section>
+
+  <section class="panel chart" aria-label="增量"><h2>净增量</h2><div id="exp-visual"></div></section>
+
+  <section class="panel inspection"><h2 id="exp-detail-title">组证据</h2><pre id="exp-detail"></pre></section>
+
+  <aside class="panel archive">
+    <h2>版本与证据</h2>
+    <ul id="exp-versions"></ul>
+    <form id="exp-actions" hidden>
+      <p id="exp-status"></p>
+      <label for="exp-note">发布说明</label>
+      <textarea id="exp-note" name="note" minlength="3" maxlength="200"></textarea>
+      <div class="review-actions">
+        <button type="button" id="exp-rollback">回滚到上一版</button>
+        <button type="submit" class="action" id="exp-publish">发布判定单</button>
+      </div>
+      <a id="exp-evidence" href="#">下载判定证据</a>
+    </form>
+    <h3>判定批次</h3>
+    <ul id="exp-history"></ul>
+  </aside>
+
+  <footer class="statusbar">
+    <span id="exp-notice" role="status" aria-live="polite">正在读取样例</span>
+    <span><a href="/examples/ready">成熟样例</a> · <a href="/examples/risk">风险样例</a> · <a href="/">归因复盘</a></span>
+  </footer>
+</main>
+</body>
+{% endblock %}

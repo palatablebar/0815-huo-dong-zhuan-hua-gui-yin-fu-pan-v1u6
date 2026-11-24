@@ -52,3 +52,20 @@ body.campaign {margin:0;background:var(--bg);color:var(--ink);font:var(--size)/1
 .touch-chip,.conversion-chip {background:var(--accent);color:var(--surface);border-radius:999px;padding:8px 10px}
 .touch-length {border-bottom:2px dotted var(--accent);text-align:center;color:var(--accent)}
 .touch-key {margin-top:9px;color:var(--sub)}
+
+/* 实验放量判定单 */
+.exp-desk {grid-template-areas:"mast mast" "source source" "kpis kpis" "results chart" "results inspection" "archive archive" "statusbar statusbar"}
+.exp-desk .verdict {margin:0 0 12px;padding:9px 12px;border-radius:var(--radius);background:var(--button);font-weight:700;overflow-wrap:anywhere}
+.exp-desk .verdict[data-result="CONTINUE"] {background:color-mix(in srgb,var(--accent) 18%,var(--surface))}
+.exp-desk .verdict[data-result="ROLLBACK"],.exp-desk .verdict[data-result="BLOCKED"] {background:color-mix(in srgb,var(--alert) 16%,var(--surface));color:var(--alert)}
+.exp-desk .badge[data-result="CONTINUE"] {color:var(--accent)}
+.exp-desk .badge[data-result="OBSERVE"] {color:color-mix(in srgb,var(--ink) 55%,var(--surface))}
+.exp-desk .badge[data-result="ROLLBACK"],.exp-desk .badge[data-result="BLOCKED"] {color:var(--alert)}
+.exp-desk #exp-versions {list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--gap);margin:0 0 14px}
+.exp-desk #exp-versions li,.exp-desk #exp-history li {display:flex;align-items:center;gap:5px}
+.exp-desk #exp-history {list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:var(--gap);margin:0}
+.exp-desk h3 {font-size:14px;margin:16px 0 6px;color:var(--sub)}
+.exp-desk #exp-visual {display:grid;gap:8px}
+.exp-desk .source input[type="number"],.exp-desk .source input[type="text"] {width:9em;position:static;opacity:1;height:auto;font:inherit;color:inherit;border:1px solid var(--line);padding:.43em .6em;border-radius:var(--radius);background:var(--surface)}
+@media(max-width:1120px) { .exp-desk {grid-template-areas:"mast mast" "source source" "kpis kpis" "results results" "chart inspection" "archive archive" "statusbar statusbar"} }
+@media(max-width:630px) { .exp-desk {grid-template-columns:minmax(0,1fr);grid-template-areas:"mast" "source" "kpis" "chart" "results" "inspection" "archive" "statusbar"} }

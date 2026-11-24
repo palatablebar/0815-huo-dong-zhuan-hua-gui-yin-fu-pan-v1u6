@@ -1,0 +1,11 @@
+record,group,arm,kind,day,value_cents,source,note
+3001,R1,treatment,conversion,15,1000,src-r1t,暂显优势
+3002,R1,control,conversion,15,700,src-r1c,观察窗未满
+4001,R2,treatment,conversion,2,500,src-r2t,负增量
+4002,R2,control,conversion,2,900,src-r2c,对照
+4003,R2,control,refund,20,50,src-r2c,晚到退款
+5001,R3,treatment,conversion,3,500,src-dup,重复来源甲
+5002,R3,treatment,conversion,4,600,src-dup,重复来源乙
+5003,R3,control,conversion,3,400,src-r3c,对照
+6001,R4,treatment,conversion,5,800,src-shared,跨组来源
+6002,R5,control,conversion,5,600,src-shared,跨组来源

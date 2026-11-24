@@ -2,7 +2,9 @@ from flask import Blueprint, Response, current_app, jsonify, request
 
 from app.business import DomainIssue
 from app.evidence.render import artifact
-from app.inputs import read_input
+from app.experiment import service as experiment
+from app.experiment.evidence import artifact as experiment_artifact
+from app.inputs import EXPERIMENT_SAMPLES, read_input
 from app.modules.pipeline import run
 from app.review.service import execute, review
 
@@ -41,6 +43,85 @@ def export(run_id):
         mimetype="application/json",
         headers={
             "Content-Disposition": f'attachment; filename="review-{report["id"][:12]}.json"',
+            "Cache-Control": "no-store",
+        },
+    )
+
+
+# -- 实验放量判定 -----------------------------------------------------------
+
+def _experiment_store():
+    return current_app.extensions["experiments"]
+
+
+def _expanded(store, batch_id):
+    """当前判定 + 完整版本链 + 审计事件，供工作台与证据复用。"""
+    return dict(
+        store.load(batch_id),
+        versions=store.history(batch_id),
+        events=store.events(batch_id),
+    )
+
+
+def _json():
+    value = request.get_json(silent=True)
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise DomainIssue("REVIEW_FIELDS")
+    return value
+
+
+@api.route("/experiments", methods=["GET", "POST"])
+def experiments():
+    store = _experiment_store()
+    if request.method == "GET":
+        return jsonify(items=store.list())
+    batch = request.form.get("batch") or None
+    affected = request.form.getlist("affected") or None
+    as_of = request.form.get("as_of")
+    result = experiment.execute(
+        store,
+        read_input(EXPERIMENT_SAMPLES),
+        batch=batch,
+        affected=affected,
+        as_of=int(as_of) if as_of not in (None, "") else None,
+    )
+    return jsonify(_expanded(store, result["id"]))
+
+
+@api.get("/experiments/<batch_id>")
+def experiment_detail(batch_id):
+    return jsonify(_expanded(_experiment_store(), batch_id))
+
+
+@api.post("/experiments/<batch_id>/publish")
+def experiment_publish(batch_id):
+    store = _experiment_store()
+    values = _json()
+    experiment.publish(store, batch_id, values.get("note"))
+    return jsonify(_expanded(store, batch_id))
+
+
+@api.post("/experiments/<batch_id>/rollback")
+def experiment_rollback(batch_id):
+    store = _experiment_store()
+    experiment.rollback(store, batch_id)
+    return jsonify(_expanded(store, batch_id))
+
+
+@api.get("/experiments/<batch_id>/evidence")
+def experiment_evidence(batch_id):
+    store = _experiment_store()
+    batch = store.load(batch_id)
+    history = store.history(batch_id)
+    events = store.events(batch_id)
+    return Response(
+        experiment_artifact(batch, history, events),
+        mimetype="application/json",
+        headers={
+            "Content-Disposition":
+                f'attachment; filename="experiment-{batch_id[:12]}.json"',
             "Cache-Control": "no-store",
         },
     )

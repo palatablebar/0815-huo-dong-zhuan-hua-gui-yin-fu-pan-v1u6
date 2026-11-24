@@ -1,0 +1,8 @@
+record,group,arm,kind,day,value_cents,source,note
+1001,G1,treatment,conversion,3,1000,src-t1,首日转化
+1002,G1,treatment,conversion,5,1200,src-t2,第二笔
+1003,G1,control,conversion,3,800,src-c1,对照首日
+1004,G1,control,conversion,5,900,src-c2,对照第二笔
+1005,G1,treatment,refund,18,100,src-t1,晚到退款
+2001,G2,treatment,conversion,4,1500,src-t3,实验组
+2002,G2,control,conversion,4,1200,src-c3,对照组

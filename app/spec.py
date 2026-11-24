@@ -12,3 +12,9 @@ PROJECT = {
     ],
     "chart": "转化分布",
 }
+EXPERIMENT = {
+    "name": "实验放量判定单",
+    "actor": "增长与财务联合复核",
+    "arms": ("treatment", "control"),
+    "decisions": ("CONTINUE", "OBSERVE", "ROLLBACK", "BLOCKED"),
+}
